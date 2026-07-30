@@ -12,25 +12,26 @@ function initCascadingDropdowns(countryDropdownId, stateDropdownId, districtDrop
     var $state = $('#' + stateDropdownId);
     var $district = $('#' + districtDropdownId);
 
-    $country.on('change', function () {
-        var countryId = $(this).val();
+    $country.off('change').on('change', function () {
+        var countryName = $(this).find('option:selected').text();
         resetDropdown($state, 'Select State');
         resetDropdown($district, 'Select District');
 
-        if (!countryId) return;
+        if (!countryName || countryName === 'Select Country') return;
 
-        PageMethods.GetStates(parseInt(countryId, 10), function (result) {
+        PageMethods.GetStates(countryName, function (result) {
             populateDropdown($state, result, 'Select State');
         }, onAjaxError);
     });
 
-    $state.on('change', function () {
-        var stateId = $(this).val();
+    $state.off('change').on('change', function () {
+        var countryName = $country.find('option:selected').text();
+        var stateName = $(this).find('option:selected').text();
         resetDropdown($district, 'Select District');
 
-        if (!stateId) return;
+        if (!stateName || stateName === 'Select State') return;
 
-        PageMethods.GetDistricts(parseInt(stateId, 10), function (result) {
+        PageMethods.GetDistricts(countryName, stateName, function (result) {
             populateDropdown($district, result, 'Select District');
         }, onAjaxError);
     });
@@ -42,22 +43,20 @@ function populateDropdown($select, items, placeholder) {
 
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
-        // Guard against malformed rows (e.g. a NULL/blank name in the DB,
-        // or a casing mismatch in the JSON) so we never render the
-        // literal string "undefined" as an option.
         var id = item ? (item.Id !== undefined ? item.Id : item.id) : null;
         var name = item ? (item.Name !== undefined ? item.Name : item.name) : null;
-
-        if (!name) continue; // skip rows with no usable label
+        if (!name) continue;
 
         var opt = document.createElement('option');
         opt.value = id != null ? id : '';
         opt.text = name;
         $select.append(opt);
     }
-    $select.prop('disabled', $select.find('option').length <= 1);
-}
 
+    var hasOptions = $select.find('option').length > 1;
+    $select.prop('disabled', !hasOptions);
+    $select.toggleClass('aspNetDisabled', !hasOptions);
+}
 function resetDropdown($select, placeholder) {
     $select.empty();
     $select.append($('<option>', { value: '', text: placeholder }));

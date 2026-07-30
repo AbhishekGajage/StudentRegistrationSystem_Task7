@@ -22,8 +22,11 @@
                 <h1>Student Registration</h1>
                 <p>Register a new student &mdash; verify email, upload photo, and submit.</p>
                 <p class="no-print"><a href="StudentList.aspx" style="color:#fff;">View all registered students &rarr;</a></p>
+                <p class="no-print"><a href="Login.aspx" style="color:#fff;">Already registered? Login here &rarr;</a></p>
             </div>
-
+            <div class="status-message-wrapper2">
+            <asp:Label ID="lblRegisterStatus" runat="server" CssClass="status-message status-message-center" Visible="false"></asp:Label>
+            </div>
             <div class="card">
                 <div class="form-grid">
 
@@ -106,7 +109,7 @@
                             CssClass="field-error" Display="Dynamic" ErrorMessage="Date of Birth is required." ValidationGroup="RegGroup" />
                         <asp:CustomValidator ID="cvDob" runat="server" ControlToValidate="txtDob"
                             CssClass="field-error" Display="Dynamic" ErrorMessage="Enter a valid Date of Birth."
-                            OnServerValidate="cvDob_ServerValidate" ValidationGroup="RegGroup" />
+                            OnServerValidate="cvDob_ServerValidate" ClientValidationFunction="validateDobNotFuture" ValidationGroup="RegGroup" />
                     </div>
 
                     <div class="form-group full-width">
@@ -170,16 +173,17 @@
                             <asp:Button ID="btnResendOtp" runat="server" Text="Resend OTP" CssClass="btn btn-outline"
                                 OnClick="btnResendOtp_Click" CausesValidation="false" Enabled="false" />
                         </div>
-                        <asp:Label ID="lblOtpStatus" runat="server" CssClass="status-message" Visible="false"></asp:Label>
                     </div>
 
                 </div>
-
+                <div class="status-message-wrapper">
+    <asp:Label ID="lblOtpStatus" runat="server" CssClass="status-message status-message-center" Visible="false"></asp:Label>
+</div>
                 <div class="btn-row">
                     <asp:Button ID="btnRegister" runat="server" Text="Complete Registration"
                         CssClass="btn btn-success" OnClick="btnRegister_Click"
                         ValidationGroup="RegGroup" Enabled="false" />
-                    <asp:Label ID="lblRegisterStatus" runat="server" CssClass="status-message" Visible="false"></asp:Label>
+                   
                 </div>
             </div>
         </div>
@@ -197,6 +201,15 @@
                 $('#hdnFullMobile').val(getFullMobileNumber());
             });
         });
+function validateDobNotFuture(sender, args) {
+    if (!args.Value) { args.IsValid = false; return; }
+    var selectedDate = new Date(args.Value);
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    var hundredYearsAgo = new Date();
+    hundredYearsAgo.setFullYear(today.getFullYear() - 100);
+            args.IsValid = selectedDate <= today && selectedDate >= hundredYearsAgo;
+        }
     </script>
 </body>
 </html>

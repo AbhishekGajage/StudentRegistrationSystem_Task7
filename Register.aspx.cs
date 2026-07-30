@@ -8,6 +8,9 @@ using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+using System.Net.Http;
+using System.Web.Script.Serialization;
+
 public partial class Register : Page
 {
     // Session keys
@@ -21,6 +24,7 @@ public partial class Register : Page
             BindCountryDropdown();
             ResetVerificationState();
         }
+        txtDob.Attributes["max"] = DateTime.Today.ToString("yyyy-MM-dd");
     }
 
     private void ResetVerificationState()
@@ -44,33 +48,67 @@ public partial class Register : Page
        WebMethods used by cascading-dropdown.js via PageMethods.
        Must be public static and decorated with [WebMethod].
        ========================================================= */
-    [WebMethod]
-    public static List<DropdownItem> GetStates(int countryId)
-    {
-        DataTable dt = DBHelper.ExecuteQuery(
-            "SELECT StateID, StateName FROM States WHERE CountryID = @CountryId ORDER BY StateName",
-            new SqlParameter("@CountryId", countryId));
+    private static readonly HttpClient httpClient = new HttpClient();
 
+    [WebMethod]
+    public static List<DropdownItem> GetStates(string countryName)
+    {
         var list = new List<DropdownItem>();
-        foreach (DataRow row in dt.Rows)
+        if (string.IsNullOrWhiteSpace(countryName)) return list;
+
+        try
         {
-            list.Add(new DropdownItem { Id = row["StateID"].ToString(), Name = row["StateName"].ToString() });
+            var payload = new JavaScriptSerializer().Serialize(new { country = countryName });
+            var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
+            var response = httpClient.PostAsync("https://countriesnow.space/api/v0.1/countries/states", content).Result;
+            string json = response.Content.ReadAsStringAsync().Result;
+
+            var result = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(json);
+            if (result.ContainsKey("data") && result["data"] != null)
+            {
+                var data = (Dictionary<string, object>)result["data"];
+                var states = (System.Collections.ArrayList)data["states"];
+                foreach (Dictionary<string, object> s in states)
+                {
+                    string name = s["name"].ToString();
+                    list.Add(new DropdownItem { Id = name, Name = name });
+                }
+            }
         }
+        catch
+        {
+            //list.Add(new DropdownItem { Id = "error", Name = "ERROR: " + (ex.InnerException != null ? ex.InnerException.Message : ex.Message) });
+        }
+
         return list;
     }
 
     [WebMethod]
-    public static List<DropdownItem> GetDistricts(int stateId)
+    public static List<DropdownItem> GetDistricts(string countryName, string stateName)
     {
-        DataTable dt = DBHelper.ExecuteQuery(
-            "SELECT DistrictID, DistrictName FROM Districts WHERE StateID = @StateId ORDER BY DistrictName",
-            new SqlParameter("@StateId", stateId));
-
         var list = new List<DropdownItem>();
-        foreach (DataRow row in dt.Rows)
+        if (string.IsNullOrWhiteSpace(countryName) || string.IsNullOrWhiteSpace(stateName)) return list;
+
+        try
         {
-            list.Add(new DropdownItem { Id = row["DistrictID"].ToString(), Name = row["DistrictName"].ToString() });
+            var payload = new JavaScriptSerializer().Serialize(new { country = countryName, state = stateName });
+            var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
+            var response = httpClient.PostAsync("https://countriesnow.space/api/v0.1/countries/state/cities", content).Result;
+            string json = response.Content.ReadAsStringAsync().Result;
+
+            var result = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(json);
+            if (result.ContainsKey("data") && result["data"] != null)
+            {
+                var cities = (System.Collections.ArrayList)result["data"];
+                foreach (var c in cities)
+                {
+                    string name = c.ToString();
+                    list.Add(new DropdownItem { Id = name, Name = name });
+                }
+            }
         }
+        catch { }
+
         return list;
     }
 
@@ -166,6 +204,20 @@ public partial class Register : Page
             return;
         }
 
+        // ---- Prevent duplicate registrations (same email or mobile number) ----
+        string mobileToCheck = string.IsNullOrWhiteSpace(hdnFullMobile.Value) ? "" : hdnFullMobile.Value;
+
+        object existingCount = DBHelper.ExecuteScalar(
+            "SELECT COUNT(*) FROM Students WHERE Email = @Email OR MobileNumber = @Mobile",
+            new SqlParameter("@Email", email),
+            new SqlParameter("@Mobile", mobileToCheck));
+
+        if (Convert.ToInt32(existingCount) > 0)
+        {
+            ShowRegisterStatus("An account with this email address or mobile number is already registered. Please login instead.", false);
+            return;
+        }
+
         // ---- Handle profile photo upload ----
         string photoPath = "~/Uploads/Students/default-avatar.png";
         if (fuProfilePhoto.HasFile)
@@ -203,27 +255,27 @@ public partial class Register : Page
         DateTime registrationTime = DateTime.Now;
 
         DBHelper.ExecuteNonQuery(
-            @"INSERT INTO Students
-                (StudentID, FullName, Email, MobileNumber, CountryID, StateID, DistrictID,
-                 Address, Gender, DateOfBirth, ProfilePhotoPath, Course, Semester,
-                 RegistrationDate, IsEmailVerified)
-              VALUES
-                (@StudentID, @FullName, @Email, @Mobile, @CountryID, @StateID, @DistrictID,
-                 @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 1)",
-            new SqlParameter("@StudentID", studentId),
-            new SqlParameter("@FullName", txtFullName.Text.Trim()),
-            new SqlParameter("@Email", email),
-            new SqlParameter("@Mobile", fullMobile),
-            new SqlParameter("@CountryID", int.Parse(ddlCountry.SelectedValue)),
-            new SqlParameter("@StateID", int.Parse(ddlState.SelectedValue)),
-            new SqlParameter("@DistrictID", int.Parse(ddlDistrict.SelectedValue)),
-            new SqlParameter("@Address", (object)txtAddress.Text.Trim() ?? DBNull.Value),
-            new SqlParameter("@Gender", rblGender.SelectedValue),
-            new SqlParameter("@Dob", DateTime.Parse(txtDob.Text)),
-            new SqlParameter("@Photo", photoPath),
-            new SqlParameter("@Course", ddlCourse.SelectedValue),
-            new SqlParameter("@Semester", ddlSemester.SelectedValue),
-            new SqlParameter("@RegDate", registrationTime));
+    @"INSERT INTO Students
+        (StudentID, FullName, Email, MobileNumber, CountryID, StateName, DistrictName,
+         Address, Gender, DateOfBirth, ProfilePhotoPath, Course, Semester,
+         RegistrationDate, IsEmailVerified)
+      VALUES
+        (@StudentID, @FullName, @Email, @Mobile, @CountryID, @StateName, @DistrictName,
+         @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 1)",
+    new SqlParameter("@StudentID", studentId),
+    new SqlParameter("@FullName", txtFullName.Text.Trim()),
+    new SqlParameter("@Email", email),
+    new SqlParameter("@Mobile", fullMobile),
+    new SqlParameter("@CountryID", int.Parse(ddlCountry.SelectedValue)),
+    new SqlParameter("@StateName", ddlState.SelectedItem.Text),
+    new SqlParameter("@DistrictName", ddlDistrict.SelectedItem.Text),
+    new SqlParameter("@Address", (object)txtAddress.Text.Trim() ?? DBNull.Value),
+    new SqlParameter("@Gender", rblGender.SelectedValue),
+    new SqlParameter("@Dob", DateTime.Parse(txtDob.Text)),
+    new SqlParameter("@Photo", photoPath),
+    new SqlParameter("@Course", ddlCourse.SelectedValue),
+    new SqlParameter("@Semester", ddlSemester.SelectedValue),
+    new SqlParameter("@RegDate", registrationTime));
 
         // ---- Notify admin ----
         try
@@ -306,41 +358,48 @@ public partial class Register : Page
     private void RebindDynamicDropdownsForPostback()
     {
         string postedCountryId = Request.Form["ddlCountry"];
-        string postedStateId = Request.Form["ddlState"];
+        string postedStateName = Request.Form["ddlState"];
 
         int countryId;
         if (!string.IsNullOrEmpty(postedCountryId) && int.TryParse(postedCountryId, out countryId))
         {
-            var states = GetStates(countryId);
+            string countryName = DBHelper.ExecuteScalar(
+                "SELECT CountryName FROM Countries WHERE CountryID = @CountryId",
+                new SqlParameter("@CountryId", countryId))?.ToString();
 
-            ddlState.Items.Clear();
-            ddlState.Items.Add(new ListItem("Select State", ""));
-            foreach (var s in states)
+            if (!string.IsNullOrEmpty(countryName))
             {
-                ddlState.Items.Add(new ListItem(s.Name, s.Id));
-            }
-            ddlState.Enabled = true;
+                var states = GetStates(countryName);
 
-            int stateId;
-            if (!string.IsNullOrEmpty(postedStateId) && int.TryParse(postedStateId, out stateId))
-            {
-                var districts = GetDistricts(stateId);
-
-                ddlDistrict.Items.Clear();
-                ddlDistrict.Items.Add(new ListItem("Select District", ""));
-                foreach (var d in districts)
+                ddlState.Items.Clear();
+                ddlState.Items.Add(new ListItem("Select State", ""));
+                foreach (var s in states)
                 {
-                    ddlDistrict.Items.Add(new ListItem(d.Name, d.Id));
+                    ddlState.Items.Add(new ListItem(s.Name, s.Id));
                 }
-                ddlDistrict.Enabled = true;
+                ddlState.Enabled = true;
+
+                if (!string.IsNullOrEmpty(postedStateName))
+                {
+                    var districts = GetDistricts(countryName, postedStateName);
+
+                    ddlDistrict.Items.Clear();
+                    ddlDistrict.Items.Add(new ListItem("Select District", ""));
+                    foreach (var d in districts)
+                    {
+                        ddlDistrict.Items.Add(new ListItem(d.Name, d.Id));
+                    }
+                    ddlDistrict.Enabled = true;
+                }
             }
         }
     }
 }
 
-/// <summary>Simple DTO used to serialize dropdown options to JSON for PageMethods.</summary>
-public class DropdownItem
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-}
+    /// <summary>Simple DTO used to serialize dropdown options to JSON for PageMethods.</summary>
+    public class DropdownItem
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+

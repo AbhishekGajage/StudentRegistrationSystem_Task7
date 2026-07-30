@@ -13,7 +13,8 @@ namespace StudentRegistrationSystem
     {
         void Application_Start(object sender, EventArgs e)
         {
-           
+
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }

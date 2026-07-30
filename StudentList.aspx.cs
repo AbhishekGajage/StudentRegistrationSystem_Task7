@@ -19,13 +19,11 @@ public partial class StudentList : Page
     {
         return DBHelper.ExecuteQuery(
             @"SELECT s.StudentID, s.FullName, s.Email, s.MobileNumber,
-                     c.CountryName, st.StateName, d.DistrictName,
-                     s.Course, s.Semester, s.RegistrationDate, s.ProfilePhotoPath
-              FROM Students s
-              INNER JOIN Countries c  ON s.CountryID  = c.CountryID
-              INNER JOIN States st    ON s.StateID    = st.StateID
-              INNER JOIN Districts d  ON s.DistrictID = d.DistrictID
-              ORDER BY s.RegistrationDate DESC");
+                 c.CountryName, s.StateName, s.DistrictName,
+                 s.Course, s.Semester, s.RegistrationDate, s.ProfilePhotoPath
+          FROM Students s
+          INNER JOIN Countries c ON s.CountryID = c.CountryID
+          ORDER BY s.RegistrationDate DESC");
     }
 
     private void BindStudentGrid()

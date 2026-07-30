@@ -9,7 +9,7 @@
 
 
 
-public partial class Register
+public partial class Dashboard
 {
 
     /// <summary>
@@ -31,263 +31,344 @@ public partial class Register
     protected global::System.Web.UI.ScriptManager ScriptManager1;
 
     /// <summary>
-    /// lblRegisterStatus control.
+    /// litWelcomeName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Label lblRegisterStatus;
+    protected global::System.Web.UI.WebControls.Literal litWelcomeName;
 
     /// <summary>
-    /// txtFullName control.
+    /// btnLogout control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TextBox txtFullName;
+    protected global::System.Web.UI.WebControls.Button btnLogout;
 
     /// <summary>
-    /// revFullName control.
+    /// photoPreview control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RegularExpressionValidator revFullName;
+    protected global::System.Web.UI.HtmlControls.HtmlImage photoPreview;
 
     /// <summary>
-    /// txtEmail control.
+    /// litFullName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TextBox txtEmail;
+    protected global::System.Web.UI.WebControls.Literal litFullName;
 
     /// <summary>
-    /// hdnFullMobile control.
+    /// litStudentId control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.HiddenField hdnFullMobile;
+    protected global::System.Web.UI.WebControls.Literal litStudentId;
 
     /// <summary>
-    /// cvMobile control.
+    /// lblUpdateStatus control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.CustomValidator cvMobile;
+    protected global::System.Web.UI.WebControls.Label lblUpdateStatus;
 
     /// <summary>
-    /// ddlCountry control.
+    /// pnlView control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.DropDownList ddlCountry;
+    protected global::System.Web.UI.WebControls.Panel pnlView;
 
     /// <summary>
-    /// rfvCountry control.
+    /// litViewStudentId control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvCountry;
+    protected global::System.Web.UI.WebControls.Literal litViewStudentId;
 
     /// <summary>
-    /// ddlState control.
+    /// litViewFullName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.DropDownList ddlState;
+    protected global::System.Web.UI.WebControls.Literal litViewFullName;
 
     /// <summary>
-    /// rfvState control.
+    /// litViewEmail control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvState;
+    protected global::System.Web.UI.WebControls.Literal litViewEmail;
 
     /// <summary>
-    /// ddlDistrict control.
+    /// litViewMobile control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.DropDownList ddlDistrict;
+    protected global::System.Web.UI.WebControls.Literal litViewMobile;
 
     /// <summary>
-    /// rfvDistrict control.
+    /// litViewCountry control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvDistrict;
+    protected global::System.Web.UI.WebControls.Literal litViewCountry;
 
     /// <summary>
-    /// rblGender control.
+    /// litViewState control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RadioButtonList rblGender;
+    protected global::System.Web.UI.WebControls.Literal litViewState;
 
     /// <summary>
-    /// txtDob control.
+    /// litViewDistrict control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TextBox txtDob;
+    protected global::System.Web.UI.WebControls.Literal litViewDistrict;
 
     /// <summary>
-    /// rfvDob control.
+    /// litViewGender control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvDob;
+    protected global::System.Web.UI.WebControls.Literal litViewGender;
 
     /// <summary>
-    /// cvDob control.
+    /// litViewDob control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.CustomValidator cvDob;
+    protected global::System.Web.UI.WebControls.Literal litViewDob;
 
     /// <summary>
-    /// txtAddress control.
+    /// litViewAddress control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TextBox txtAddress;
+    protected global::System.Web.UI.WebControls.Literal litViewAddress;
 
     /// <summary>
-    /// rfvAddress control.
+    /// btnEdit control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvAddress;
+    protected global::System.Web.UI.WebControls.Button btnEdit;
 
     /// <summary>
-    /// revAddress control.
+    /// pnlEdit control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.RegularExpressionValidator revAddress;
+    protected global::System.Web.UI.WebControls.Panel pnlEdit;
 
     /// <summary>
-    /// ddlCourse control.
+    /// txtEditStudentId control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.DropDownList ddlCourse;
+    protected global::System.Web.UI.WebControls.TextBox txtEditStudentId;
 
     /// <summary>
-    /// ddlSemester control.
+    /// txtEditEmail control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.DropDownList ddlSemester;
+    protected global::System.Web.UI.WebControls.TextBox txtEditEmail;
 
     /// <summary>
-    /// fuProfilePhoto control.
+    /// txtEditFullName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.FileUpload fuProfilePhoto;
+    protected global::System.Web.UI.WebControls.TextBox txtEditFullName;
 
     /// <summary>
-    /// lblPhotoError control.
+    /// rfvEditFullName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Label lblPhotoError;
+    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEditFullName;
 
     /// <summary>
-    /// btnSendOtp control.
+    /// revEditFullName control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Button btnSendOtp;
+    protected global::System.Web.UI.WebControls.RegularExpressionValidator revEditFullName;
 
     /// <summary>
-    /// txtOtp control.
+    /// txtEditMobileDisplay control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.TextBox txtOtp;
+    protected global::System.Web.UI.WebControls.TextBox txtEditMobileDisplay;
 
     /// <summary>
-    /// btnVerifyOtp control.
+    /// hdnEditFullMobile control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Button btnVerifyOtp;
+    protected global::System.Web.UI.WebControls.HiddenField hdnEditFullMobile;
 
     /// <summary>
-    /// btnResendOtp control.
+    /// cvEditMobile control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Button btnResendOtp;
+    protected global::System.Web.UI.WebControls.CustomValidator cvEditMobile;
 
     /// <summary>
-    /// lblOtpStatus control.
+    /// ddlEditCountry control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Label lblOtpStatus;
+    protected global::System.Web.UI.WebControls.DropDownList ddlEditCountry;
 
     /// <summary>
-    /// btnRegister control.
+    /// ddlEditState control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Button btnRegister;
+    protected global::System.Web.UI.WebControls.DropDownList ddlEditState;
+
+    /// <summary>
+    /// ddlEditDistrict control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.DropDownList ddlEditDistrict;
+
+    /// <summary>
+    /// txtEditAddress control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.TextBox txtEditAddress;
+
+    /// <summary>
+    /// rfvEditAddress control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEditAddress;
+
+    /// <summary>
+    /// revEditAddress control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.RegularExpressionValidator revEditAddress;
+
+    /// <summary>
+    /// editPhotoPreview control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.HtmlControls.HtmlImage editPhotoPreview;
+
+    /// <summary>
+    /// fuEditProfilePhoto control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.FileUpload fuEditProfilePhoto;
+
+    /// <summary>
+    /// lblEditPhotoError control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Label lblEditPhotoError;
+
+    /// <summary>
+    /// btnSaveProfile control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Button btnSaveProfile;
+
+    /// <summary>
+    /// btnCancelEdit control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Button btnCancelEdit;
 }
