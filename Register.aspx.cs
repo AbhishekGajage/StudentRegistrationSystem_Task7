@@ -113,6 +113,23 @@ public partial class Register : Page
     }
 
     /* =========================================================
+       Task III -- Client-side duplicate-email check (live, on blur).
+       Called via PageMethods from Register.aspx before the user even
+       requests an OTP, so they get instant feedback.
+       ========================================================= */
+    [WebMethod]
+    public static bool CheckEmailExists(string email)
+    {
+        if (string.IsNullOrWhiteSpace(email)) return false;
+
+        object result = DBHelper.ExecuteScalar(
+            "SELECT COUNT(1) FROM Students WHERE Email = @Email",
+            new SqlParameter("@Email", email.Trim()));
+
+        return Convert.ToInt32(result) > 0;
+    }
+
+    /* =========================================================
        OTP Flow
        ========================================================= */
     protected void btnSendOtp_Click(object sender, EventArgs e)
@@ -122,6 +139,15 @@ public partial class Register : Page
         if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
         {
             ShowOtpStatus("Please enter a valid email address before requesting an OTP.", false);
+            return;
+        }
+
+        // Server-side guard as well, in case the client-side check was bypassed
+        // (JS disabled, direct postback, etc.) -- don't even send an OTP for a
+        // duplicate email.
+        if (CheckEmailExists(email))
+        {
+            ShowOtpStatus("A student is already registered with this Email Address.", false);
             return;
         }
 
@@ -204,17 +230,31 @@ public partial class Register : Page
             return;
         }
 
-        // ---- Prevent duplicate registrations (same email or mobile number) ----
         string mobileToCheck = string.IsNullOrWhiteSpace(hdnFullMobile.Value) ? "" : hdnFullMobile.Value;
 
-        object existingCount = DBHelper.ExecuteScalar(
-            "SELECT COUNT(*) FROM Students WHERE Email = @Email OR MobileNumber = @Mobile",
-            new SqlParameter("@Email", email),
+        // ---- Task III: Prevent Duplicate Registration ----
+        // Checked as two separate queries so each gives its own precise message,
+        // per spec ("A student is already registered with this Email Address.").
+        // This re-checks Email even though CheckEmailExists ran earlier client-side
+        // and again in btnSendOtp_Click -- someone else could have registered that
+        // exact email in the few minutes since this student verified their OTP.
+        object emailExists = DBHelper.ExecuteScalar(
+            "SELECT COUNT(1) FROM Students WHERE Email = @Email",
+            new SqlParameter("@Email", email));
+
+        if (Convert.ToInt32(emailExists) > 0)
+        {
+            ShowRegisterStatus("A student is already registered with this Email Address.", false);
+            return;
+        }
+
+        object mobileExists = DBHelper.ExecuteScalar(
+            "SELECT COUNT(1) FROM Students WHERE MobileNumber = @Mobile",
             new SqlParameter("@Mobile", mobileToCheck));
 
-        if (Convert.ToInt32(existingCount) > 0)
+        if (Convert.ToInt32(mobileExists) > 0)
         {
-            ShowRegisterStatus("An account with this email address or mobile number is already registered. Please login instead.", false);
+            ShowRegisterStatus("A student is already registered with this Mobile Number.", false);
             return;
         }
 
@@ -396,10 +436,9 @@ public partial class Register : Page
     }
 }
 
-    /// <summary>Simple DTO used to serialize dropdown options to JSON for PageMethods.</summary>
-    public class DropdownItem
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-    }
-
+/// <summary>Simple DTO used to serialize dropdown options to JSON for PageMethods.</summary>
+public class DropdownItem
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+}

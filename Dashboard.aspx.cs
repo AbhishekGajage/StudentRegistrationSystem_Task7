@@ -84,7 +84,7 @@ public partial class Dashboard : Page
 
         DataTable dt = DBHelper.ExecuteQuery(
             @"SELECT StudentID, FullName, Email, MobileNumber, CountryID, StateName, DistrictName,
-                     Address, Gender, DateOfBirth, ProfilePhotoPath
+                     Address, Gender, DateOfBirth, ProfilePhotoPath, RegistrationDate, LastLoginDate
               FROM Students WHERE StudentID = @StudentID",
             new SqlParameter("@StudentID", studentId));
 
@@ -104,6 +104,28 @@ public partial class Dashboard : Page
         string districtName = row["DistrictName"] == DBNull.Value ? "" : row["DistrictName"].ToString();
         string photoPath = row["ProfilePhotoPath"] == DBNull.Value ? "~/Uploads/Students/default-avatar.png" : row["ProfilePhotoPath"].ToString();
         string dob = row["DateOfBirth"] == DBNull.Value ? "" : Convert.ToDateTime(row["DateOfBirth"]).ToString("dd MMM yyyy");
+        string regDate = row["RegistrationDate"] == DBNull.Value ? "-" : Convert.ToDateTime(row["RegistrationDate"]).ToString("dd MMM yyyy, hh:mm tt");
+
+        // Login.aspx already overwrote Students.LastLoginDate to "now" before redirecting here,
+        // so prefer the PREVIOUS value it stashed in Session for this display over the DB column.
+        string lastLogin;
+        if (Session["HasPriorLogin"] != null)
+        {
+            // Fresh from Login.aspx this request cycle -- trust the flag it set.
+            lastLogin = (bool)Session["HasPriorLogin"]
+                ? Convert.ToDateTime(Session["PreviousLastLogin"]).ToString("dd MMM yyyy, hh:mm tt")
+                : "This is your first login";
+        }
+        else if (row["LastLoginDate"] != DBNull.Value)
+        {
+            // Dashboard loaded outside the login flow (e.g. browser refresh later) --
+            // fall back to the DB value, which reflects this session's login time.
+            lastLogin = Convert.ToDateTime(row["LastLoginDate"]).ToString("dd MMM yyyy, hh:mm tt");
+        }
+        else
+        {
+            lastLogin = "This is your first login";
+        }
 
         litWelcomeName.Text = System.Web.HttpUtility.HtmlEncode(fullName);
         litFullName.Text = System.Web.HttpUtility.HtmlEncode(fullName);
@@ -119,6 +141,8 @@ public partial class Dashboard : Page
         litViewDistrict.Text = System.Web.HttpUtility.HtmlEncode(string.IsNullOrEmpty(districtName) ? "-" : districtName);
         litViewGender.Text = System.Web.HttpUtility.HtmlEncode(row["Gender"].ToString());
         litViewDob.Text = dob;
+        litViewRegDate.Text = regDate;
+        litViewLastLogin.Text = lastLogin;
         litViewAddress.Text = System.Web.HttpUtility.HtmlEncode(row["Address"] == DBNull.Value ? "-" : row["Address"].ToString());
     }
 
@@ -141,6 +165,23 @@ public partial class Dashboard : Page
        Edit mode toggle
        ========================================================= */
     protected void btnEdit_Click(object sender, EventArgs e)
+    {
+        EnterEditMode();
+    }
+
+    /// <summary>
+    /// "Change Password" reuses Edit Profile, since this system authenticates
+    /// with the Mobile Number (not a separate password field/column). Updating
+    /// Mobile Number via Save Changes IS the password change. We just surface
+    /// a note and focus the Mobile field (handled client-side via #changepw).
+    /// </summary>
+    protected void btnChangePassword_Click(object sender, EventArgs e)
+    {
+        EnterEditMode();
+        lblEditModeNote.Visible = true;
+    }
+
+    private void EnterEditMode()
     {
         string studentId = Session["StudentID"].ToString();
 
@@ -211,6 +252,7 @@ public partial class Dashboard : Page
     {
         pnlEdit.Visible = false;
         pnlView.Visible = true;
+        lblEditModeNote.Visible = false;
         LoadProfile();
     }
 
@@ -312,6 +354,7 @@ public partial class Dashboard : Page
 
         pnlEdit.Visible = false;
         pnlView.Visible = true;
+        lblEditModeNote.Visible = false;
         LoadProfile();
         ShowUpdateStatus("Profile updated successfully.", true);
     }

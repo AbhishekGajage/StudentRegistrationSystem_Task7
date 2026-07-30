@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="BulkRegister.aspx" />
     <Content Include="Dashboard.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Styles\Auth.css" />
@@ -132,13 +133,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Register.aspx" />
-    <Content Include="screenshots_student_registration_system\Exported_Excel_file.png" />
-    <Content Include="screenshots_student_registration_system\Home_page.png" />
-    <Content Include="screenshots_student_registration_system\Otp_send.png" />
-    <Content Include="screenshots_student_registration_system\Otp_verified.png" />
-    <Content Include="screenshots_student_registration_system\Print_preview.png" />
-    <Content Include="screenshots_student_registration_system\Registration_successfully.png" />
-    <Content Include="screenshots_student_registration_system\Student_records.png" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -212,6 +206,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkRegister.aspx.cs">
+      <DependentUpon>BulkRegister.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BulkRegister.aspx.designer.cs">
+      <DependentUpon>BulkRegister.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CaptchaHandler.ashx.cs">
       <DependentUpon>CaptchaHandler.ashx</DependentUpon>
     </Compile>

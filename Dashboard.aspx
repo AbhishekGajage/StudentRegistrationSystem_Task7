@@ -46,15 +46,23 @@
                     <div class="info-item"><label>District</label><span><asp:Literal ID="litViewDistrict" runat="server"></asp:Literal></span></div>
                     <div class="info-item"><label>Gender</label><span><asp:Literal ID="litViewGender" runat="server"></asp:Literal></span></div>
                     <div class="info-item"><label>Date of Birth</label><span><asp:Literal ID="litViewDob" runat="server"></asp:Literal></span></div>
+                    <div class="info-item"><label>Registration Date</label><span><asp:Literal ID="litViewRegDate" runat="server"></asp:Literal></span></div>
+                    <div class="info-item"><label>Last Login</label><span><asp:Literal ID="litViewLastLogin" runat="server"></asp:Literal></span></div>
                     <div class="info-item full-width"><label>Address</label><span><asp:Literal ID="litViewAddress" runat="server"></asp:Literal></span></div>
 
                     <div class="full-width btn-row">
                         <asp:Button ID="btnEdit" runat="server" Text="Edit Profile" CssClass="btn btn-primary" OnClick="btnEdit_Click" CausesValidation="false" />
+                        <asp:Button ID="btnChangePassword" runat="server" Text="Change Password" CssClass="btn btn-outline"
+                            OnClick="btnChangePassword_Click" OnClientClick="window.location.hash='changepw';" CausesValidation="false" />
                     </div>
                 </asp:Panel>
 
                 <!-- ============ EDIT MODE ============ -->
                 <asp:Panel ID="pnlEdit" runat="server" CssClass="form-grid" Visible="false">
+
+                    <asp:Label ID="lblEditModeNote" runat="server" CssClass="full-width" Visible="false"
+                        Text="Your Mobile Number is used as your login password. Update it below and click Save Changes to change your password."
+                        ForeColor="#555" Font-Italic="true"></asp:Label>
 
                     <div class="form-group">
                         <label>Student ID</label>
@@ -149,6 +157,15 @@
             $('form').on('submit', function () {
                 $('#hdnEditFullMobile').val(getFullMobileNumber());
             });
+
+            // If Change Password was clicked, jump focus to the Mobile field.
+            if (window.location.hash === '#changepw') {
+                var mobileField = document.getElementById('txtEditMobileDisplay');
+                if (mobileField) {
+                    mobileField.focus();
+                    mobileField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         });
     </script>
 </body>

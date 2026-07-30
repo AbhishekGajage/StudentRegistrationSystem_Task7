@@ -45,7 +45,7 @@ public partial class Login : Page
 
         // ---- Look up the student ----
         DataTable dt = DBHelper.ExecuteQuery(
-            "SELECT StudentID, FullName, Email, MobileNumber FROM Students WHERE Email = @Email",
+            "SELECT StudentID, FullName, Email, MobileNumber, LastLoginDate FROM Students WHERE Email = @Email",
             new SqlParameter("@Email", email));
 
         if (dt.Rows.Count == 0)
@@ -73,9 +73,26 @@ public partial class Login : Page
         }
 
         // ---- Success: start the session ----
-        Session["StudentID"] = row["StudentID"].ToString();
+        string studentId = row["StudentID"].ToString();
+
+        Session["StudentID"] = studentId;
         Session["StudentEmail"] = row["Email"].ToString();
         Session["StudentName"] = row["FullName"].ToString();
+
+        // Carry the PREVIOUS LastLoginDate forward for display on the dashboard
+        // ("Last Login" should show the prior session, not the one just starting).
+        bool hadPriorLogin = row["LastLoginDate"] != DBNull.Value;
+        Session["HasPriorLogin"] = hadPriorLogin;
+        if (hadPriorLogin)
+        {
+            Session["PreviousLastLogin"] = row["LastLoginDate"];
+        }
+
+        // Now stamp this login as the new LastLoginDate for next time.
+        DBHelper.ExecuteNonQuery(
+            "UPDATE Students SET LastLoginDate = @Now WHERE StudentID = @StudentID",
+            new SqlParameter("@Now", DateTime.Now),
+            new SqlParameter("@StudentID", studentId));
 
         Response.Redirect("Dashboard.aspx");
     }

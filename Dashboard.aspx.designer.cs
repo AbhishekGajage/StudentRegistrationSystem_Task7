@@ -175,6 +175,24 @@ public partial class Dashboard
     protected global::System.Web.UI.WebControls.Literal litViewDob;
 
     /// <summary>
+    /// litViewRegDate control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Literal litViewRegDate;
+
+    /// <summary>
+    /// litViewLastLogin control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Literal litViewLastLogin;
+
+    /// <summary>
     /// litViewAddress control.
     /// </summary>
     /// <remarks>
@@ -193,6 +211,15 @@ public partial class Dashboard
     protected global::System.Web.UI.WebControls.Button btnEdit;
 
     /// <summary>
+    /// btnChangePassword control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Button btnChangePassword;
+
+    /// <summary>
     /// pnlEdit control.
     /// </summary>
     /// <remarks>
@@ -200,6 +227,15 @@ public partial class Dashboard
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Panel pnlEdit;
+
+    /// <summary>
+    /// lblEditModeNote control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Label lblEditModeNote;
 
     /// <summary>
     /// txtEditStudentId control.
