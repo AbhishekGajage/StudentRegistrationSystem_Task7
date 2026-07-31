@@ -7,6 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="Styles/Site.css" />
     <link rel="stylesheet" href="Styles/Auth.css" />
+    <style>
+        .auth-icon {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #4338ca;
+            font-size: 11.5px;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+    </style>
 </head>
 <body class="auth-body">
     <form id="form1" runat="server">
@@ -53,6 +67,7 @@
 
                 <div class="auth-footer">
                     <p>New student? <a href="Register.aspx">Register here &rarr;</a></p>
+                    <p class="no-print"><a href="AdminLogin.aspx" style="color:#f00">Admin Login &rarr;</a></p>
                 </div>
             </div>
         </div>

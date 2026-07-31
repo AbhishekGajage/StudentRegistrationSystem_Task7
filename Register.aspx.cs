@@ -298,10 +298,12 @@ public partial class Register : Page
     @"INSERT INTO Students
         (StudentID, FullName, Email, MobileNumber, CountryID, StateName, DistrictName,
          Address, Gender, DateOfBirth, ProfilePhotoPath, Course, Semester,
-         RegistrationDate, IsEmailVerified)
+         RegistrationDate, IsEmailVerified, ApprovalStatus, AccountStatus,
+         CreatedDate, LastModifiedDate)
       VALUES
         (@StudentID, @FullName, @Email, @Mobile, @CountryID, @StateName, @DistrictName,
-         @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 1)",
+         @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 1,
+         'Pending', 'Active', @RegDate, @RegDate)",
     new SqlParameter("@StudentID", studentId),
     new SqlParameter("@FullName", txtFullName.Text.Trim()),
     new SqlParameter("@Email", email),
@@ -330,7 +332,8 @@ public partial class Register : Page
             // Registration should still succeed even if the admin notification email fails.
         }
 
-        ShowRegisterStatus("Registration successful! Your Student ID is " + studentId + ".", true);
+        ShowRegisterStatus("Registration successful! Your Student ID is " + studentId +
+            ". Your application is pending admin approval -- you'll receive an email once it's reviewed, and you can then log in.", true);
         ClearFormAfterSuccess();
     }
 

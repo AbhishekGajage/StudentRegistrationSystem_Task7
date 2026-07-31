@@ -45,7 +45,9 @@ public partial class Login : Page
 
         // ---- Look up the student ----
         DataTable dt = DBHelper.ExecuteQuery(
-            "SELECT StudentID, FullName, Email, MobileNumber, LastLoginDate FROM Students WHERE Email = @Email",
+            @"SELECT StudentID, FullName, Email, MobileNumber, LastLoginDate,
+                     ApprovalStatus, AccountStatus, RejectionRemark
+              FROM Students WHERE Email = @Email",
             new SqlParameter("@Email", email));
 
         if (dt.Rows.Count == 0)
@@ -68,6 +70,34 @@ public partial class Login : Page
         if (!string.Equals(last10, enteredPassword, StringComparison.Ordinal))
         {
             ShowStatus("Incorrect password.", false);
+            RefreshCaptchaImage();
+            return;
+        }
+
+        // ---- Task 7: approval / account status gates ----
+        // Credentials are correct at this point -- now check whether this
+        // student is actually allowed to log in yet.
+        string approvalStatus = row["ApprovalStatus"].ToString();
+        string accountStatus = row["AccountStatus"].ToString();
+
+        if (approvalStatus == "Pending")
+        {
+            ShowStatus("Your registration is still pending admin approval. Please check back later.", false);
+            RefreshCaptchaImage();
+            return;
+        }
+
+        if (approvalStatus == "Rejected")
+        {
+            string remark = row["RejectionRemark"] == DBNull.Value ? "" : row["RejectionRemark"].ToString();
+            ShowStatus("Your registration was rejected." + (string.IsNullOrEmpty(remark) ? "" : " Reason: " + remark), false);
+            RefreshCaptchaImage();
+            return;
+        }
+
+        if (accountStatus == "Inactive")
+        {
+            ShowStatus("Your account has been deactivated. Please contact the administrator.", false);
             RefreshCaptchaImage();
             return;
         }

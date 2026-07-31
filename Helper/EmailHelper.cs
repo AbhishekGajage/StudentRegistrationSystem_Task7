@@ -6,8 +6,9 @@ using System.Net.Mail;
 using System.Web;
 
 /// <summary>
-/// Sends templated HTML emails: OTP verification to the student
-/// and new-registration notifications to the admin.
+/// Sends templated HTML emails: OTP verification to the student,
+/// new-registration notifications to the admin, and application
+/// approval/rejection notifications to the student.
 /// </summary>
 public static class EmailHelper
 {
@@ -64,6 +65,33 @@ public static class EmailHelper
 
         string adminEmail = ConfigurationManager.AppSettings["AdminEmail"];
         SendMail(adminEmail, "New Student Registration: " + studentName, body);
+    }
+
+    /// <summary>Task 7: notifies the student their application was approved.</summary>
+    public static void SendApprovalEmail(string toEmail, string studentName, string studentId)
+    {
+        string body = LoadTemplate("ApprovalEmailTemplate.html");
+        body = body.Replace("{{InstituteName}}", InstituteName)
+                    .Replace("{{StudentName}}", string.IsNullOrWhiteSpace(studentName) ? "Student" : studentName)
+                    .Replace("{{StudentID}}", studentId)
+                    .Replace("{{ApprovalDateTime}}", DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt"))
+                    .Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
+
+        SendMail(toEmail, "Your Registration Has Been Approved", body);
+    }
+
+    /// <summary>Task 7: notifies the student their application was rejected, with the remark.</summary>
+    public static void SendRejectionEmail(string toEmail, string studentName, string studentId, string remark)
+    {
+        string body = LoadTemplate("RejectionEmailTemplate.html");
+        body = body.Replace("{{InstituteName}}", InstituteName)
+                    .Replace("{{StudentName}}", string.IsNullOrWhiteSpace(studentName) ? "Student" : studentName)
+                    .Replace("{{StudentID}}", studentId)
+                    .Replace("{{RejectionRemark}}", HttpUtility.HtmlEncode(remark))
+                    .Replace("{{RejectionDateTime}}", DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt"))
+                    .Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
+
+        SendMail(toEmail, "Update on Your Registration Application", body);
     }
 
     private static void SendMail(string toEmail, string subject, string htmlBody)

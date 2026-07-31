@@ -476,10 +476,12 @@ public partial class BulkRegister : Page
                     @"INSERT INTO Students
                         (StudentID, FullName, Email, MobileNumber, CountryID, StateName, DistrictName,
                          Address, Gender, DateOfBirth, ProfilePhotoPath, Course, Semester,
-                         RegistrationDate, IsEmailVerified)
+                         RegistrationDate, IsEmailVerified, ApprovalStatus, AccountStatus,
+                         CreatedDate, LastModifiedDate)
                       VALUES
                         (@StudentID, @FullName, @Email, @Mobile, @CountryID, @StateName, @DistrictName,
-                         @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 0)",
+                         @Address, @Gender, @Dob, @Photo, @Course, @Semester, @RegDate, 0,
+                         'Pending', 'Active', @RegDate, @RegDate)",
                     new SqlParameter("@StudentID", studentId),
                     new SqlParameter("@FullName", row["FullName"]),
                     new SqlParameter("@Email", row["Email"]),
